@@ -1,61 +1,106 @@
-# Template: Python - Browser automation with Playwright
+# RobotSpareBin Automation Project
 
-This template leverages the new [Python framework](https://github.com/robocorp/robocorp), the [libraries](https://github.com/robocorp/robocorp/blob/master/docs/README.md#python-libraries) from to same project as well.
+This project automates the process of ordering robots from [RobotSpareBin Industries Inc.](https://robotsparebinindustries.com/#/robot-order). The robot performs the following tasks:
+1. Downloads a CSV file containing order details.
+2. Fills in the order form and submits it.
+3. Saves the order receipt as a PDF.
+4. Takes a screenshot of the ordered robot and embeds it into the PDF receipt.
+5. Archives all receipt PDFs into a single ZIP file.
 
-The template provides you with the basic structure of a Python project: logging out of the box and controlling your tasks without fiddling with the base Python stuff. The environment contains the most used libraries, so you do not have to start thinking about those right away. 
-With `robocorp-browser`, the browser automation uses Playwright without any extra steps. 
+## Table of Contents
+- [Installation](#installation)
+- [Project Structure](#project-structure)
+- [Usage](#usage)
+- [Function Overview](#function-overview)
+- [Troubleshooting](#troubleshooting)
 
-👉 Other templates are available as well via our tooling and on our [Portal](https://robocorp.com/portal/tag/template)
+---
 
-## Running
+## Installation
 
-#### VS Code
-1. Get [Robocorp Code](https://robocorp.com/docs/developer-tools/visual-studio-code/extension-features) -extension for VS Code.
-1. You'll get an easy-to-use side panel and powerful command-palette commands for running, debugging, code completion, docs, etc.
+1. **Clone the Repository**
+   ```bash
+   git https://github.com/jerrykomane/robocorp-cert-two.git
+   cd robotsparebin-automation
 
-#### Command line
+2. **Install Robocorp and Required Libraries**
+Ensure you have Robocorp Lab or the Robocorp Code extension for VS Code installed. The following libraries are required:
 
-1. [Get RCC](https://github.com/robocorp/rcc?tab=readme-ov-file#getting-started)
-1. Use the command: `rcc run`
+RPA.Browser.Selenium (browser automation)
+RPA.Tables (table and CSV handling)
+RPA.Excel.Files (file management)
+RPA.HTTP (HTTP requests for file download)
+RPA.PDF (PDF generation and manipulation)
+RPA.Archive (file archiving)
+These libraries can be added via conda.yaml or requirements.txt for Robocorp environments.
 
-## Results
+Run the Robot Use Robocorp Lab or Robocorp Code to run the robot, or execute the following in a compatible environment:
 
-🚀 After running the bot, check out the `log.html` under the `output` -folder.
+rcc run
 
-## Dependencies
 
-We strongly recommend getting familiar with adding your dependencies in [conda.yaml](conda.yaml) to control your Python dependencies and the whole Python environment for your automation.
+## Project Structure
 
-<details>
-  <summary>🙋‍♂️ "Why not just pip install...?"</summary>
+robotsparebin-automation/
+│
+├── tasks.py              # Main script with task definitions and helper functions
+├── output/               # Directory where PDF receipts and screenshots are saved
+├── README.md             # Documentation for the project
+└── conda.yaml            # Environment configuration file for dependencies
 
-Think of [conda.yaml](conda.yaml) as an equivalent of the requirements.txt, but much better. 👩‍💻 With `conda.yaml`, you are not just controlling your PyPI dependencies; you control the complete Python environment, which makes things repeatable and easy.
+## Usage
+Usage
+Run the Automation
+Configure Browser Settings: By default, the browser runs in headed mode (visible). You can switch to headless mode for faster execution by setting headless=True in browser.configure.
 
-👉 You will probably need to run your code on another machine quite soon, so by using `conda.yaml`:
-- You can avoid `Works on my machine` -cases
-- You do not need to manage Python installations on all the machines
-- You can control exactly which version of Python your automation will run on 
-  - You'll also control the pip version to avoid dep. resolution changes
-- No need for venv, pyenv, ... tooling and knowledge sharing inside your team.
-- Define dependencies in conda.yaml, let our tooling do the heavy lifting.
-- You get all the content of [conda-forge](https://prefix.dev/channels/conda-forge) without any extra tooling
+Start the Robot: The robot will:
 
-> Dive deeper with [these](https://github.com/robocorp/rcc/blob/master/docs/recipes.md#what-is-in-condayaml) resources.
+Open the RobotSpareBin order page.
+Close any modals.
+Download and process the orders in the orders.csv file.
+Submit each order and retry if it fails.
+Generate PDFs and take screenshots for each order, embedding the screenshots in the PDFs.
+Archive all PDFs into a single ZIP file named merged.zip.
+Outputs:
 
-</details>
-<br/>
+PDF Receipts with embedded screenshots saved in the output/ directory.
+A ZIP archive of all receipts saved as merged.zip.
+Function Overview
+order_robots_from_RobotSpareBin
+Main function orchestrating the entire order process.
 
-> The full power of [rpaframework](https://robocorp.com/docs/python/rpa-framework) -libraries is also available on Python as a backup while we implement the new Python libraries.
+open_robot_order_website
+Opens the RobotSpareBin website.
 
-## What now?
+close_annoying_modal
+Closes the modal that appears on the website.
 
-🚀 Now, go get'em
+download_excel_file
+Downloads the orders.csv file containing robot order details.
 
-Start writing Python and remember that the AI/LLM's out there are getting really good and creating Python code specifically.
+get_orders
+Reads the downloaded orders.csv file and yields each order as a row.
 
-👉 Try out [Robocorp ReMark 💬](https://chat.robocorp.com)
+fill_the_form
+Fills out the form for each order, submitting and retrying as needed.
 
-For more information, do not forget to check out the following:
-- [Robocorp Documentation -site](https://robocorp.com/docs)
-- [Portal for more examples](https://robocorp.com/portal)
-- Follow our main [robocorp -repository](https://github.com/robocorp/robocorp) as it is the main location where we developed the libraries and the framework.
+store_receipt_as_pdf
+Saves the order receipt as a PDF with a unique name.
+
+screenshot_robot
+Captures a screenshot of the robot image.
+
+embed_screenshot_to_receipt
+Embeds the screenshot into the respective PDF receipt.
+
+archive_receipts
+Zips all PDF receipts into a single ZIP file.
+
+Troubleshooting
+Headed vs Headless Mode: If you want to run the robot visibly, set headless=False in browser.configure. Headless mode is recommended for faster execution in production.
+
+Retries on Order Submission: The robot automatically retries if an order fails. Check the console log for retry messages if an order submission does not go through on the first try.
+
+Debugging: Set breakpoints in Visual Studio Code to pause execution and inspect variables. Use the Robocorp extension's debug mode for step-by-step inspection.
+
+For further help, reach out on the Robocorp Slack in the #help-developer-training channel.
