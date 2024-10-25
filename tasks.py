@@ -21,7 +21,7 @@ def order_robots_from_RobotSpareBin():
     Creates ZIP archive of the receipts and the images.
     """
     browser.configure(
-        slowmo=1,
+        headless=True,
     )
     open_robot_order_website()
     close_annoying_modal()
